@@ -1,4 +1,4 @@
-group 'com.tw.practise.demo'
+group 'com.tw.dddsample.demo'
 version '1.0-SNAPSHOT'
 
 //apply plugin: 'java'
