@@ -11,6 +11,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class InstanceTest {
 
+    //TODO:replace with right constraints
     private static final String DEFAULT_REGION = "SZ";
 
     @Test

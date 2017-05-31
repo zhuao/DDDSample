@@ -3,15 +3,14 @@ package com.tw.practise.infrastructure.domain;
 import com.tw.practise.domain.Instance;
 import com.tw.practise.domain.InstanceRepository;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 /**
  * Created by azhu on 29/05/2017.
  */
-//@Component
 public class InstanceRepositoryImpl implements InstanceRepository {
 
     private static final HashMap<String, Instance> MEM_DB = new HashMap<>();
@@ -24,5 +23,10 @@ public class InstanceRepositoryImpl implements InstanceRepository {
         }
 
         return instance;
+    }
+
+    @Override
+    public List<Instance> findAll() {
+        return null;
     }
 }

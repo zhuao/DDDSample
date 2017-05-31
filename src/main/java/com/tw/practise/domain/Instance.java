@@ -15,7 +15,6 @@ public class Instance {
         return instanceId;
     }
 
-    private int id;
     @Id
     private String instanceId;
     private String name;
