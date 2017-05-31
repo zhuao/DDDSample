@@ -20,6 +20,7 @@ public class CreateInstanceRequestData {
     }
 
     public String getImageId() {
+        //TODO: to delete
         System.out.println(attributes +"attributes");
         System.out.println(attributes +"attributes.plan");
         System.out.println(attributes.getName() +"attributes.name");

@@ -23,8 +23,10 @@ public class InstancesController {
     @RequestMapping(path = "/instances", method = RequestMethod.POST)
     @ResponseBody
     public String createInstance(@RequestBody RequestParamWrapper requestParamWrapper) {
+        //TODO rename RequestParamWrapper
         Instance instance = new InstanceAssembler(requestParamWrapper.get()).assembleInstance();
         instanceService.createInstance(instance);
+        //TODO refactor to viewresolver
         return new GsonBuilder().create().toJson(instance);
     }
 

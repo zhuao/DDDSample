@@ -10,19 +10,22 @@ import javax.persistence.Transient;
 @Entity
 public class Instance {
     public static final String DEFAULT_REGION = "SZ";
-
     public String getInstanceId() {
         return instanceId;
     }
 
     @Id
     private String instanceId;
+
     private String name;
     private String imageId;
     private String flavorId;
     @Transient
     private Region region;
     private String az;
+    private InstanceStatus status = InstanceStatus.Accepted;
+
+    enum InstanceStatus {Accepted, Created, Running, Pause, Stopped, Deleting, Retired}
 
     public Instance() {
         region = new Region(DEFAULT_REGION);
@@ -56,5 +59,18 @@ public class Instance {
 
     public void setInstanceId(String instanceId) {
         this.instanceId = instanceId;
+    }
+
+    public boolean start() {
+        this.status = InstanceStatus.Running;
+        return true;
+    }
+
+    //TODO how notify resource context to retire instance physically
+    public boolean retire() {
+        if (status != InstanceStatus.Running) {
+            return true;
+        }
+        return false;
     }
 }
