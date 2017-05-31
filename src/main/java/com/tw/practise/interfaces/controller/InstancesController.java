@@ -4,6 +4,7 @@ import com.google.gson.GsonBuilder;
 import com.tw.practise.application.InstanceService;
 import com.tw.practise.domain.Instance;
 import com.tw.practise.domain.InstanceRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +15,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class InstancesController {
 
 
+    @Autowired
     private InstanceService instanceService;
+    @Autowired
     private InstanceRepository instanceRepository;
 
     @RequestMapping(path = "/instances", method = RequestMethod.POST)
@@ -31,8 +34,4 @@ public class InstancesController {
         return new GsonBuilder().create().toJson(instanceRepository.findAll());
     }
 
-    public InstancesController(InstanceService instanceService, InstanceRepository instanceRepository) {
-        this.instanceService = instanceService;
-        this.instanceRepository = instanceRepository;
-    }
 }

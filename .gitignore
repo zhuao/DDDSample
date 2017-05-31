@@ -2,4 +2,5 @@ out
 build
 **.iml
 .idea
-
+.gradle
+./gradle/**
