@@ -11,7 +11,7 @@ import java.util.UUID;
 /**
  * Created by azhu on 29/05/2017.
  */
-@Component
+//@Component
 public class InstanceRepositoryImpl implements InstanceRepository {
 
     private static final HashMap<String, Instance> MEM_DB = new HashMap<>();

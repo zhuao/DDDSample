@@ -1,11 +1,13 @@
 package com.tw.practise.domain;
 
-import org.springframework.validation.Validator;
-import org.springframework.validation.annotation.Validated;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Transient;
 
 /**
  * Created by azhu on 25/05/2017.
  */
+@Entity
 public class Instance {
     public static final String DEFAULT_REGION = "SZ";
 
@@ -13,10 +15,13 @@ public class Instance {
         return instanceId;
     }
 
+    private int id;
+    @Id
     private String instanceId;
     private String name;
     private String imageId;
     private String flavorId;
+    @Transient
     private Region region;
     private String az;
 
