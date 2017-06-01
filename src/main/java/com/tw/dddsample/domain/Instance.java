@@ -70,6 +70,7 @@ public class Instance {
     public boolean retire() {
         if (status != InstanceStatus.Running) {
             return true;
+
         }
         return false;
     }

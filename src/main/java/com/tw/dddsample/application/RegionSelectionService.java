@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 /**
  * Created by azhu on 26/05/2017.
  */
+//TODO: change to be an interface
 @Component
 public class RegionSelectionService {
     public String selectAZ(String az, Flavor flavor) {

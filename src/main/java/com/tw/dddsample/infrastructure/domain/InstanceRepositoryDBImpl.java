@@ -27,6 +27,7 @@ public class InstanceRepositoryDBImpl extends SimpleJpaRepository<Instance, Stri
     @Transactional
     public Instance save(Instance instance) {
         if (StringUtils.isEmpty(instance.getInstanceId())) {
+            //TODO: move UUID.random to domain ?
             instance.setInstanceId(UUID.randomUUID().toString());
         }
         return super.save(instance);

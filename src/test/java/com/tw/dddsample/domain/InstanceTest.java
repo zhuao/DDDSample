@@ -73,7 +73,7 @@ public class InstanceTest {
         Instance instance = new Instance();
         instance.retire();
 
-        assertTrue("Instance could not be started after retired", instance.start());
+        assertFalse("Instance could not be started after retired", instance.start());
     }
 
 
