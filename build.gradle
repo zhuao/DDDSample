@@ -7,10 +7,7 @@ version '1.0-SNAPSHOT'
 
 //sourceCompatibility = 1.8
 
-repositories {
-    mavenCentral()
 
-}
 
 buildscript {
 
@@ -22,11 +19,13 @@ buildscript {
     }
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.3.RELEASE"
+        classpath 'net.researchgate:gradle-release:2.4.0'
 
     }
 }
 apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
+apply plugin: 'net.researchgate.release'
 
 dependencies {
 
