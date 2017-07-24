@@ -81,3 +81,57 @@ release {
         commitVersionFileOnly = false
     }
 }
+
+task createReleaseBranch() {
+    try {
+        println '=============='
+        def branchout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'rev-parse', '--abbrev-ref', 'HEAD'
+            standardOutput = branchout
+        }
+        def branch = branchout.toString().trim()
+
+        println '==============' + branch
+
+        if (branch.equals("master")) {
+            def stdout = new ByteArrayOutputStream()
+            exec {
+                commandLine 'git', 'describe', '--tags'
+                standardOutput = stdout
+            }
+            return stdout.toString().trim()
+        } else {
+            return branch;
+        }
+    }
+    catch (ignored) {
+        return null;
+    }
+}
+
+
+project.task('release2', description: 'Verify project, release, and update version to next.', group: 'phasedRelease', type: GradleBuild) {
+
+    String p = project.path
+    p = !p.endsWith(Project.PATH_SEPARATOR) ? p + Project.PATH_SEPARATOR : p
+
+    startParameter = project.getGradle().startParameter.newInstance()
+
+    tasks = [
+            "${p}createScmAdapter" as String,
+            "${p}initScmAdapter" as String,
+//            "${p}checkCommitNeeded" as String,
+            "${p}checkUpdateNeeded" as String,
+//            "${p}unSnapshotVersion" as String,
+            "${p}confirmReleaseVersion" as String,
+            "${p}checkSnapshotDependencies" as String,
+//            "${p}runBuildTasks" as String,
+//            "${p}preTagCommit" as String,
+//            "${p}createReleaseTag" as String,
+//            "${p}updateVersion" as String,
+//            "${p}commitNewVersion" as String
+
+    ]
+}
+
