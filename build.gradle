@@ -1,7 +1,6 @@
 import java.util.regex.Matcher
 
 group 'com.tw.dddsample.demo'
-version '1.0-SNAPSHOT'
 
 //apply plugin: 'java'
 //apply plugin: 'org.springframework.boot'
