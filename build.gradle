@@ -2,6 +2,7 @@ import com.sun.xml.internal.rngom.ast.builder.BuildException
 import sun.misc.Regexp
 
 import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 
 //apply plugin: 'java'
@@ -94,9 +95,8 @@ release {
 }
 
 
-project.task('createReleaseBranch', description: 'Add release branch', group: 'phasedRelease', type: GradleBuild) {
+task createReleaseBranch << {
     try {
-        println '=============='
 
         def releaseBranch = new ByteArrayOutputStream()
         exec {
@@ -106,38 +106,56 @@ project.task('createReleaseBranch', description: 'Add release branch', group: 'p
         def branch = releaseBranch.toString().trim()
 
         if (branch) {
-            println '======release existed========'
-            exec { commandLine 'git', 'checkout', 'release' }
-            exec { commandLine 'git', 'merge', 'master' }
-
+            mergeToRelease()
+            moveMasterBranchForward()
         } else {
-            println '======release not========'
-            exec { commandLine 'git', 'branch', '-D', 'release' }
-            exec { commandLine 'git', 'checkout', '-b', 'release' }
-            exec { commandLine 'git', 'checkout', 'master' }
-            println '=====version----:'
-            def nextversion = nextVersion(version)
-            println("=====version: " +nextversion)
-            exec { commandLine 'git', 'add', '.' }
-            exec { commandLine 'git', 'commit', '-m', 'Pre commit:change version to '+ nextversion}
+            createReleaseBranch()
+            moveMasterBranchForward()
         }
 
 
     }
-    catch (ignored) {
-        return null;
+    catch (error) {
+        error.printStackTrace()
+        throw new GradleException('Fail to create branch', error)
     }
+}
+
+private void mergeToRelease() {
+    exec { commandLine 'git', 'fetch' }
+    exec { commandLine 'git', 'checkout', 'release' }
+    exec { commandLine 'git', 'merge', 'master' }
+}
+
+private ExecResult moveMasterBranchForward() {
+    def nextversion = nextVersion(version)
+    writeVersion(project.file("gradle.properties"), 'version', nextversion)
+
+    exec { commandLine 'git', 'add', '.' }
+    exec { commandLine 'git', 'commit', '-m', 'Pre commit:change version to '+ nextversion}
+    exec { commandLine 'git', 'push', 'origin', 'master'}
+}
+
+private void createReleaseBranch() {
+    exec { commandLine 'git', 'checkout', '-b', 'release' }
+    exec { commandLine 'git', 'push', 'origin', 'release' }
+    exec { commandLine 'git', 'checkout', 'master' }
 }
 
 
 def nextVersion(String currentVersion) {
-    def nextVersion =  currentVersion + 1;
-    println '=====version----:1:'
-    project.version = nextVersion
-    println '=====version----:2:'
-    writeVersion(project.file("gradle.properties"), 'version', project.version)
-    println '=====version----:6:'
-    nextVersion
+    def versionNumber
+    if (currentVersion.contains("-SNAPSHOT")) {
+        versionNumber = currentVersion.replace("-SNAPSHOT", "")
+    } else {
+        versionNumber = currentVersion
+    }
+
+    def index = versionNumber.lastIndexOf('.')
+    def patchVersion = versionNumber.substring(index + 1)
+    def newPatchVersion = (patchVersion as int) + 1
+    def nextVersion = versionNumber.substring(0, index + 1) + newPatchVersion
+    nextVersion = currentVersion.contains("-SNAPSHOT") ? nextVersion + '-SNAPSHOT': nextVersion
 }
 
 def writeVersion(File file, String key, Object version) {
