@@ -53,9 +53,9 @@ dependencies {
 }
 
 
-task createReleaseBranch << {
+task tagDevelopingCode << {
     try {
-        moveToUAT()
+        mergeDevelopingCodeToRelease()
     }
     catch (error) {
         error.printStackTrace()

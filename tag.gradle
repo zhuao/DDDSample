@@ -1,6 +1,6 @@
 import com.sun.xml.internal.rngom.ast.builder.BuildException
 
-ext.moveToUAT = {
+ext.mergeDevelopingCodeToRelease = {
     def releaseBranch = new ByteArrayOutputStream()
     exec {
         commandLine 'git', 'branch', '--list', '-r', '|', 'grep', 'release'
