@@ -144,7 +144,7 @@ task createReleaseBranch() {
             def nextversion = nextVersion(version)
             println("=====version: ${nextversion}")
             exec { commandLine 'git', 'add', '.' }
-            exec { commandLine 'git', 'commit', '-m', 'Pre commit:change version to ${nextversion}'}
+            exec { commandLine 'git', 'commit', '-m', 'Pre commit:change version to '+ nextversion}
         }
 
 
