@@ -134,9 +134,14 @@ task createReleaseBranch() {
 
         } else {
             println '======release not========'
-            exec {
-                commandLine 'git', 'checkout', 'release'
-            }
+            exec { commandLine 'git', 'branch', '-D', 'release' }
+            exec { commandLine 'git', 'checkout', '-b', 'release' }
+            exec { commandLine 'git', 'checkout', 'master' }
+            println '=====version----:'
+            def nextversion = nextVersion(version)
+            println("=====version: ${nextversion}")
+            exec { commandLine 'git', 'add', '.' }
+            exec { commandLine 'git', 'commit', '-m', 'Pre commit:change version to ${nextversion}'}
         }
 
 
@@ -181,3 +186,18 @@ project.task('release2', description: 'Verify project, release, and update versi
     ]
 }
 
+def nextVersion(String currentVersion) {
+    def nextVersion =  currentVersion + 1;
+    println '=====version----:1:'
+    project.version = nextVersion
+    println '=====version----:2:'
+    attributes.versionModified = true
+    println '=====version----:3:'
+    project.subprojects?.each { it.version = nextVersion }
+    println '=====version----:4:'
+    List<String> versionProperties = extension.versionProperties + 'version'
+    println '=====version----:5:'
+    versionProperties.each { writeVersion(findPropertiesFile(), it, project.version) }
+    println '=====version----:6:'
+    println("=====---${nextVersion}")
+}
