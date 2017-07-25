@@ -148,30 +148,6 @@ task createReleaseBranch() {
 }
 
 
-project.task('release2', description: 'Verify project, release, and update version to next.', group: 'phasedRelease', type: GradleBuild) {
-
-    String p = project.path
-    p = !p.endsWith(Project.PATH_SEPARATOR) ? p + Project.PATH_SEPARATOR : p
-
-    startParameter = project.getGradle().startParameter.newInstance()
-
-    tasks = [
-            "${p}createScmAdapter" as String,
-            "${p}initScmAdapter" as String,
-//            "${p}checkCommitNeeded" as String,
-            "${p}checkUpdateNeeded" as String,
-//            "${p}unSnapshotVersion" as String,
-            "${p}confirmReleaseVersion" as String,
-            "${p}checkSnapshotDependencies" as String,
-//            "${p}runBuildTasks" as String,
-//            "${p}preTagCommit" as String,
-//            "${p}createReleaseTag" as String,
-//            "${p}updateVersion" as String,
-//            "${p}commitNewVersion" as String
-
-    ]
-}
-
 def nextVersion(String currentVersion) {
     def nextVersion =  currentVersion + 1;
     println '=====version----:1:'
