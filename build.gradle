@@ -148,16 +148,6 @@ task createReleaseBranch() {
         }
 
 
-        if (branch.equals("master")) {
-            def stdout = new ByteArrayOutputStream()
-            exec {
-                commandLine 'git', 'describe', '--tags'
-                standardOutput = stdout
-            }
-            return stdout.toString().trim()
-        } else {
-            return branch;
-        }
     }
     catch (ignored) {
         return null;
