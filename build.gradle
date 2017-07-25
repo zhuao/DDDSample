@@ -115,13 +115,6 @@ task tagRelease {
 task createReleaseBranch() {
     try {
         println '=============='
-        def branchout = new ByteArrayOutputStream()
-        exec {
-            commandLine 'git', 'rev-parse', '--abbrev-ref', 'HEAD'
-            standardOutput = branchout
-        }
-
-//                def branch = branchout.toString().trim()
 
         def releaseBranch = new ByteArrayOutputStream()
         exec {
