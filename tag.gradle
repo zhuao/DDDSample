@@ -4,7 +4,7 @@ import sun.misc.Regexp
 import java.util.regex.Matcher
 
 
-def moveToUAT() {
+ext.moveToUAT = {
     def releaseBranch = new ByteArrayOutputStream()
     exec {
         commandLine 'git', 'branch', '--list', '-r', '|', 'grep', 'release'
