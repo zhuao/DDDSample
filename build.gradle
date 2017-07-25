@@ -94,7 +94,7 @@ release {
 }
 
 
-project.task('createReleaseBranch', description: 'Add ', group: 'phasedRelease', type: GradleBuild) {
+project.task('createReleaseBranch', description: 'Add release branch', group: 'phasedRelease', type: GradleBuild) {
     try {
         println '=============='
 
