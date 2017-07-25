@@ -1,3 +1,6 @@
+import com.sun.xml.internal.rngom.ast.builder.BuildException
+import sun.misc.Regexp
+
 import java.util.regex.Matcher
 
 
@@ -191,13 +194,30 @@ def nextVersion(String currentVersion) {
     println '=====version----:1:'
     project.version = nextVersion
     println '=====version----:2:'
-    attributes.versionModified = true
+//    attributes.versionModified = true
     println '=====version----:3:'
     project.subprojects?.each { it.version = nextVersion }
     println '=====version----:4:'
-    List<String> versionProperties = extension.versionProperties + 'version'
     println '=====version----:5:'
-    versionProperties.each { writeVersion(findPropertiesFile(), it, project.version) }
+    writeVersion(project.file("gradle.properties"), 'version', project.version)
     println '=====version----:6:'
     println("=====---${nextVersion}")
 }
+
+def writeVersion(File file, String key, Object version) {
+    try {
+        if (!file.file) {
+            project.ant.echo(file: file, message: "$key=$version")
+        } else {
+            // we use replace here as other ant tasks escape and modify the whole file
+            project.ant.replaceregexp(file: file, byline: true) {
+                regexp(pattern: "^(\\s*)$key((\\s*[=|:]\\s*)|(\\s+)).+\$")
+                substitution(expression: "\\1$key\\2$version")
+            }
+        }
+    } catch (BuildException be) {
+        throw new GradleException('Unable to write version property.', be)
+    }
+
+}
+
