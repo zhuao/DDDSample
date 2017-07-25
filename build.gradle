@@ -194,9 +194,6 @@ def nextVersion(String currentVersion) {
     println '=====version----:1:'
     project.version = nextVersion
     println '=====version----:2:'
-    println '=====version----:3:'
-    println '=====version----:4:'
-    println '=====version----:5:'
     writeVersion(project.file("gradle.properties"), 'version', project.version)
     println '=====version----:6:'
     println("=====---${nextVersion}")
