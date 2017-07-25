@@ -128,10 +128,6 @@ project.task('createReleaseBranch', description: 'Verify project, release, and u
     }
 }
 
-task createReleaseBranch() {
-
-}
-
 
 def nextVersion(String currentVersion) {
     def nextVersion =  currentVersion + 1;
