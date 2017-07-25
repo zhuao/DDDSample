@@ -1,9 +1,3 @@
-import com.sun.xml.internal.rngom.ast.builder.BuildException
-import sun.misc.Regexp
-
-import java.util.regex.Matcher
-import java.util.regex.Pattern
-
 
 //apply plugin: 'java'
 //apply plugin: 'org.springframework.boot'
@@ -26,22 +20,17 @@ buildscript {
     }
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.3.RELEASE"
-        classpath 'net.researchgate:gradle-release:2.4.0'
         classpath 'org.ajoberstar:gradle-git:1.7.2'
 
     }
 }
 
-//plugins {
-//    id 'org.ajoberstar.grgit' version '1.7.2'
-//}
-
 group 'com.tw.dddsample.demo'
 
 apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
-apply plugin: 'net.researchgate.release'
 apply plugin: 'org.ajoberstar.grgit'
+apply from: 'tag.gradle'
 
 dependencies {
 
@@ -63,115 +52,16 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'com.jayway.restassured', name: 'rest-assured', version: '2.9.0'
 
-
-
-}
-
-
-release {
-    failOnUpdateNeeded = false
-    tagTemplate = '${version}'
-    preCommitText = ''
-    preTagCommitMessage = '[Gradle Release Plugin] - pre tag commit: '
-    tagCommitMessage = '[Gradle Release Plugin] - creating tag: '
-    newVersionCommitMessage = '[Gradle Release Plugin] - new version commit: '
-    tagTemplate = '${version}'
-    versionPropertyFile = 'gradle.properties'
-    versionProperties = ['version']
-    buildTasks = ['build']
-    versionPatterns = [
-            /(\d+)([^\d]*$)/: { Matcher m, Project p -> m.replaceAll("${(m[0][1] as int) + 1}${m[0][2]}") }
-    ]
-    scmAdapters = [
-            net.researchgate.release.GitAdapter
-    ]
-
-    git {
-        requireBranch = 'master'
-        pushToRemote = 'origin'
-        pushToBranchPrefix = ''
-        commitVersionFileOnly = false
-    }
 }
 
 
 task createReleaseBranch << {
     try {
-
-        def releaseBranch = new ByteArrayOutputStream()
-        exec {
-            commandLine 'git', 'branch', '--list', '-r', '|', 'grep', 'release'
-            standardOutput = releaseBranch
-        }
-        def branch = releaseBranch.toString().trim()
-
-        if (branch) {
-            mergeToRelease()
-            moveMasterBranchForward()
-        } else {
-            createReleaseBranch()
-            moveMasterBranchForward()
-        }
-
-
+        moveToUAT()
     }
     catch (error) {
         error.printStackTrace()
         throw new GradleException('Fail to create branch', error)
     }
-}
-
-private void mergeToRelease() {
-    exec { commandLine 'git', 'fetch' }
-    exec { commandLine 'git', 'checkout', 'release' }
-    exec { commandLine 'git', 'merge', 'master' }
-}
-
-private ExecResult moveMasterBranchForward() {
-    def nextversion = nextVersion(version)
-    writeVersion(project.file("gradle.properties"), 'version', nextversion)
-
-    exec { commandLine 'git', 'add', '.' }
-    exec { commandLine 'git', 'commit', '-m', 'Pre commit:change version to '+ nextversion}
-    exec { commandLine 'git', 'push', 'origin', 'master'}
-}
-
-private void createReleaseBranch() {
-    exec { commandLine 'git', 'checkout', '-b', 'release' }
-    exec { commandLine 'git', 'push', 'origin', 'release' }
-    exec { commandLine 'git', 'checkout', 'master' }
-}
-
-
-def nextVersion(String currentVersion) {
-    def versionNumber
-    if (currentVersion.contains("-SNAPSHOT")) {
-        versionNumber = currentVersion.replace("-SNAPSHOT", "")
-    } else {
-        versionNumber = currentVersion
-    }
-
-    def index = versionNumber.lastIndexOf('.')
-    def patchVersion = versionNumber.substring(index + 1)
-    def newPatchVersion = (patchVersion as int) + 1
-    def nextVersion = versionNumber.substring(0, index + 1) + newPatchVersion
-    nextVersion = currentVersion.contains("-SNAPSHOT") ? nextVersion + '-SNAPSHOT': nextVersion
-}
-
-def writeVersion(File file, String key, Object version) {
-    try {
-        if (!file.file) {
-            project.ant.echo(file: file, message: "$key=$version")
-        } else {
-            // we use replace here as other ant tasks escape and modify the whole file
-            project.ant.replaceregexp(file: file, byline: true) {
-                regexp(pattern: "^(\\s*)$key((\\s*[=|:]\\s*)|(\\s+)).+\$")
-                substitution(expression: "\\1$key\\2$version")
-            }
-        }
-    } catch (BuildException be) {
-        throw new GradleException('Unable to write version property.', be)
-    }
-
 }
 
