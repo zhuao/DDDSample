@@ -93,6 +93,10 @@ release {
     }
 }
 
+project.task('release2', description: 'Verify project, release, and update version to next.', group: 'phasedRelease', type: GradleBuild) {
+    
+}
+
 task createReleaseBranch() {
     try {
         println '=============='
