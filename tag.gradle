@@ -1,8 +1,4 @@
 import com.sun.xml.internal.rngom.ast.builder.BuildException
-import sun.misc.Regexp
-
-import java.util.regex.Matcher
-
 
 ext.moveToUAT = {
     def releaseBranch = new ByteArrayOutputStream()
