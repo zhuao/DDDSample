@@ -93,11 +93,7 @@ release {
     }
 }
 
-project.task('release2', description: 'Verify project, release, and update version to next.', group: 'phasedRelease', type: GradleBuild) {
-    
-}
-
-task createReleaseBranch() {
+project.task('createReleaseBranch', description: 'Verify project, release, and update version to next.', group: 'phasedRelease', type: GradleBuild) {
     try {
         println '=============='
 
@@ -130,6 +126,10 @@ task createReleaseBranch() {
     catch (ignored) {
         return null;
     }
+}
+
+task createReleaseBranch() {
+
 }
 
 
