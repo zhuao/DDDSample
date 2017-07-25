@@ -1,6 +1,5 @@
 import java.util.regex.Matcher
 
-group 'com.tw.dddsample.demo'
 
 //apply plugin: 'java'
 //apply plugin: 'org.springframework.boot'
@@ -24,12 +23,21 @@ buildscript {
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.3.RELEASE"
         classpath 'net.researchgate:gradle-release:2.4.0'
+        classpath 'org.ajoberstar:gradle-git:1.7.2'
 
     }
 }
+
+//plugins {
+//    id 'org.ajoberstar.grgit' version '1.7.2'
+//}
+
+group 'com.tw.dddsample.demo'
+
 apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'net.researchgate.release'
+apply plugin: 'org.ajoberstar.grgit'
 
 dependencies {
 
@@ -82,6 +90,25 @@ release {
     }
 }
 
+task tagRelease {
+    description = 'Tags the current head with the project\'s version.'
+    doLast {
+//        grgit.tag.add {
+//            name = version
+//            message = "Release of ${version}"
+//        }
+
+
+        try {
+            def branches = grgit.branch.list(contains: 'origin/master', mode: 'REMOTE')
+        } catch (ignored) {
+            println("fail not found")
+        }
+//        println("==status==" + branches)
+
+    }
+}
+
 task createReleaseBranch() {
     try {
         println '=============='
@@ -90,9 +117,30 @@ task createReleaseBranch() {
             commandLine 'git', 'rev-parse', '--abbrev-ref', 'HEAD'
             standardOutput = branchout
         }
-        def branch = branchout.toString().trim()
 
-        println '==============' + branch
+//                def branch = branchout.toString().trim()
+
+        def releaseBranch = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'branch', '--list', '-r', '|', 'grep', 'release'
+            standardOutput = releaseBranch
+        }
+        def branch = releaseBranch.toString().trim()
+
+        if (branch) {
+            println '======release existed========'
+            exec { commandLine 'git', 'checkout', 'release' }
+            exec { commandLine 'git', 'merge', 'master' }
+
+        } else {
+            println '======release not========'
+            exec { commandLine 'git', 'checkout', '-b', 'release' }
+            exec { commandLine 'git', 'checkout', 'master' }
+            def nextversion = nextVersion(version)
+            exec { commandLine 'git', 'add', '.' }
+            exec { commandLine 'git', 'commit', '-m', 'Pre commit:change version to ${nextversion}'}
+        }
+
 
         if (branch.equals("master")) {
             def stdout = new ByteArrayOutputStream()
@@ -135,3 +183,13 @@ project.task('release2', description: 'Verify project, release, and update versi
     ]
 }
 
+def nextVersion(String currentVersion) {
+    def nextVersion =  currentVersion + 1;
+    project.version = nextVersion
+    attributes.versionModified = true
+    project.subprojects?.each { it.version = nextVersion }
+    List<String> versionProperties = extension.versionProperties + 'version'
+    versionProperties.each { writeVersion(findPropertiesFile(), it, project.version) }
+
+    project.version
+}
