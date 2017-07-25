@@ -194,9 +194,7 @@ def nextVersion(String currentVersion) {
     println '=====version----:1:'
     project.version = nextVersion
     println '=====version----:2:'
-//    attributes.versionModified = true
     println '=====version----:3:'
-    project.subprojects?.each { it.version = nextVersion }
     println '=====version----:4:'
     println '=====version----:5:'
     writeVersion(project.file("gradle.properties"), 'version', project.version)
