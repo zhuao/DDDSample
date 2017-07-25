@@ -93,25 +93,6 @@ release {
     }
 }
 
-task tagRelease {
-    description = 'Tags the current head with the project\'s version.'
-    doLast {
-//        grgit.tag.add {
-//            name = version
-//            message = "Release of ${version}"
-//        }
-
-
-        try {
-            def branches = grgit.branch.list(contains: 'origin/master', mode: 'REMOTE')
-        } catch (ignored) {
-            println("fail not found")
-        }
-//        println("==status==" + branches)
-
-    }
-}
-
 task createReleaseBranch() {
     try {
         println '=============='
