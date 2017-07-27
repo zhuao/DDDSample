@@ -56,6 +56,7 @@ dependencies {
 task tagDevelopingCode << {
     try {
         mergeDevelopingCodeToRelease()
+        //it will be conflict, this is relase branch code
     }
     catch (error) {
         error.printStackTrace()
