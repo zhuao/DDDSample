@@ -20,22 +20,30 @@ ext.mergeDevelopingCodeToRelease = {
 private void mergeToRelease() {
     exec { commandLine 'git', 'fetch' }
     exec { commandLine 'git', 'checkout', 'release' }
-    exec { commandLine 'git', 'merge', 'master' }
+    try {
+        exec { commandLine 'git', 'merge', 'master' }
+    } catch (mergeConflict) {
+        exec { commandLine 'git', 'merge', '--continue' }
+    }
+    exec { commandLine 'git', 'push', 'origin', 'release' }
+
 }
 
 private ExecResult moveMasterBranchForward() {
+    exec { commandLine 'git', 'checkout', 'master' }
+
     def nextversion = nextVersion(version)
     writeVersion(project.file("gradle.properties"), 'version', nextversion)
 
     exec { commandLine 'git', 'add', '.' }
     exec { commandLine 'git', 'commit', '-m', 'Pre commit:change version to '+ nextversion}
+    exec { commandLine 'git', 'pull', 'origin', 'master', '--rebase'}
     exec { commandLine 'git', 'push', 'origin', 'master'}
 }
 
 private void createReleaseBranch() {
     exec { commandLine 'git', 'checkout', '-b', 'release' }
     exec { commandLine 'git', 'push', 'origin', 'release' }
-    exec { commandLine 'git', 'checkout', 'master' }
 }
 
 
