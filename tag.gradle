@@ -2,11 +2,16 @@ import com.sun.xml.internal.rngom.ast.builder.BuildException
 
 ext.mergeDevelopingCodeToRelease = {
     def releaseBranch = new ByteArrayOutputStream()
+    def errorMsg = new ByteArrayOutputStream()
     exec {
-        commandLine 'git', 'branch', '--list', '-r', '|', 'grep', 'release'
+        commandLine 'git', 'branch', '--list', '-r', '|', 'grep', 'origin/release'
         standardOutput = releaseBranch
+        errorOutput = errorMsg
     }
+    println("=====" + releaseBranch.toString())
+    println("==-----===" + errorMsg.toString())
     def branch = releaseBranch.toString().trim()
+    println("----=====" + branch)
 
     if (branch) {
         mergeToRelease()
@@ -23,7 +28,8 @@ private void mergeToRelease() {
     try {
         exec { commandLine 'git', 'merge', 'master' }
     } catch (mergeConflict) {
-        exec { commandLine 'git', 'merge', '--continue' }
+        exec { commandLine 'git', 'add', '.' }
+        exec { commandLine 'git', 'commit', '-m', "Need to fix: Commit conflict to wait for merge manually" }
     }
     exec { commandLine 'git', 'push', 'origin', 'release' }
 
