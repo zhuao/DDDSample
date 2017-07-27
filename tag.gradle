@@ -2,16 +2,12 @@ import com.sun.xml.internal.rngom.ast.builder.BuildException
 
 ext.mergeDevelopingCodeToRelease = {
     def releaseBranch = new ByteArrayOutputStream()
-    def errorMsg = new ByteArrayOutputStream()
     exec {
         commandLine 'git', 'branch', '--list', '-r', '|', 'grep', 'origin/release'
         standardOutput = releaseBranch
-        errorOutput = errorMsg
     }
-    println("=====" + releaseBranch.toString())
-    println("==-----===" + errorMsg.toString())
+    println("=Remote release branch name is=" + releaseBranch.toString())
     def branch = releaseBranch.toString().trim()
-    println("----=====" + branch)
 
     if (branch) {
         mergeToRelease()
