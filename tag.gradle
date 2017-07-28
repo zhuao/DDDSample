@@ -2,6 +2,10 @@ import com.sun.xml.internal.rngom.ast.builder.BuildException
 
 ext.mergeDevelopingCodeToRelease = {
     def releaseBranch = new ByteArrayOutputStream()
+
+//    commandLine 'echo', 'http://username:pwd@github.com', '>', './.gitcredentail'
+//    commandLine 'git', 'config', '--local', 'credentail.helper', 'store --file=./.gitcredential'
+
     exec {
         commandLine 'git', 'branch', '--list', '-r', '|', 'grep', 'origin/release'
         standardOutput = releaseBranch
@@ -19,8 +23,8 @@ ext.mergeDevelopingCodeToRelease = {
 }
 
 private void mergeToRelease() {
-    exec { commandLine 'git', 'fetch' }
     exec { commandLine 'git', 'checkout', 'release' }
+    exec { commandLine 'git', 'pull', 'origin', 'release', '--rebase' }
     try {
         exec { commandLine 'git', 'merge', 'master' }
     } catch (mergeConflict) {
