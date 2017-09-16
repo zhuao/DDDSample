@@ -1,0 +1,52 @@
+{
+    "provider": {
+        "name": "EC2"
+    },
+    "consumer": {
+        "name": "RDS"
+    },
+    "interactions": [
+        {
+            "description": "a request to create an ec2 instance",
+            "request": {
+                "method": "POST",
+                "path": "/instances",
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+              "body": {
+                "flavor_id": "m2.xlarge",
+                "az": "SZ"
+              }
+            },
+            "response": {
+                "status": 200,
+                "headers": {
+                    "Content-Type": "application/json; charset=UTF-8"
+                },
+                "body": {
+                    "data": {
+                        "attributes": {
+                            "flavor_id": "c1.medium"
+                        },
+                        "id": "---3Bo-"
+                    }
+                },
+                "matchingRules": {
+                    "$.body.data.id": {
+                        "regex": "[0-9a-zA-Z\\-]+",
+                        "match": "regex"
+                    }
+                }
+            }
+        }
+    ],
+    "metadata": {
+        "pact-specification": {
+            "version": "2.0.0"
+        },
+        "pact-jvm": {
+            "version": "3.4.0"
+        }
+    }
+}

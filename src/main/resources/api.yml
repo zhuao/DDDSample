@@ -1,0 +1,436 @@
+# this is an practise example with EC2 API
+# The Swagger specification link http://swagger.io/specification/ and the DOM of Swagger http://openapi-specification-visual-documentation.apihandyman.io/
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Swagger EC2
+  description: "This is the API of EC2 service. You can find out more about the service at [http://example.com/ec2](http://example.com/ec2)."
+  license:
+    name: Example 2.0
+    url: http://www.example.com/licenses/LICENSE-2.0.html
+
+host: "ec2.example.com"
+basePath: "/"
+schemes:
+  - "http"
+  - "https"
+
+consumes:
+  - application/json
+produces:
+  - application/json
+  - application/atom+xml
+
+tags:
+  - name: Instance
+    description: "API about EC2 Instance"
+  - name: Flavor
+    description: "API about flavor for EC2 Instance"
+
+responses:
+  BadRequest400:
+    description: Bad Request
+    schema:
+      $ref: '#/definitions/failure'
+  Unauthorized401:
+    description: Unauthorized
+  ServerError500:
+    description: Unexpected error
+    headers:
+      Content-Type:
+        type: string
+        description: the response media type
+    schema:
+      $ref: '#/definitions/failure'
+paths:
+  /instances:
+    get:
+      summary: 查找实例基本信息
+      operationId: findInstances
+      tags:
+        - Instance
+      parameters:
+        - name: flavor
+          in: query
+          description: Flavor ID
+          type: string
+          required: false
+        - name: a
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/InstanceListResponse'
+        401:
+          description: Unauthorized
+          headers:
+            Content-Type:
+              type: string
+              description: the response media type
+        406:
+          description: Not Acceptable
+          headers:
+            Content-Type:
+              type: string
+              description: the response media type
+        500:
+          description: Unexpected error
+          headers:
+            Content-Type:
+              type: string
+              description: the response media type
+          schema:
+            $ref: '#/definitions/failure'
+    post:
+      summary: 新建EC2实例
+      operationId: createInstances
+      tags:
+        - Instance
+      description: user wants to create a new instance
+      parameters:
+        - name: body
+          in: body
+          description: new instance info
+          schema:
+            $ref: '#/definitions/InstanceCreateRequest'
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: '#/definitions/InstanceResponse'
+        400:
+          $ref: '#/responses/BadRequest400'
+        401:
+          $ref: '#/responses/Unauthorized401'
+        403:
+          description: Forbidden
+          headers:
+            Content-Type:
+              type: string
+              description: the response media type
+        406:
+          description: Not Acceptable
+          headers:
+            Content-Type:
+              type: string
+              description: the response media type
+        415:
+          description: Unsupported Media Type
+          headers:
+            Content-Type:
+              type: string
+              description: the response media type
+        500:
+          $ref: '#/responses/ServerError500'
+  /instances/{instanceId}:
+    get:
+      summary: 获取实例基本信息
+      operationId: findInstance
+      tags:
+        - Instance
+      parameters:
+        - name: instanceId
+          type: string
+          in: path
+          description: 实例唯一标识
+          required: true
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/InstanceResponse'
+        401:
+          description: Unauthorized
+          headers:
+            Content-Type:
+              type: string
+              description: the response media type
+        406:
+          description: Not Acceptable
+          headers:
+            Content-Type:
+              type: string
+              description: the response media type
+        500:
+          description: Unexpected error
+          headers:
+            Content-Type:
+              type: string
+              description: the response media type
+          schema:
+            $ref: '#/definitions/failure'
+  /instances/{instanceId}/action:
+    put:
+      summary: 对实例进行操作
+      operationId: operateInstance
+      tags:
+        - Instance
+      parameters:
+        - name: instanceId
+          type: string
+          in: path
+          description: 实例唯一标识
+          required: true
+        - name: action
+          type: string
+          in: query
+          description: 对实例的操作，如start
+          enum:
+            - Launch
+            - Reboot
+            - Terminate
+      responses:
+        200:
+          description: OK
+          headers:
+            Content-Type:
+              type: string
+              description: the response media type
+          schema:
+            $ref: '#/definitions/InstanceResponse'
+  /flavors:
+    get:
+      summary: 查找Flavor信息
+      operationId: findFlavors
+      tags:
+        - Flavor
+      parameters:
+        - name: vCPU
+          in: query
+          description: vCPU count
+          type: integer
+          required: false
+        - name: memInGiB
+          in: query
+          description: The memory size in GiB unit
+          type: number
+          required: false
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/FlavorListResponse'
+        401:
+          description: Unauthorized
+          headers:
+            Content-Type:
+              type: string
+              description: the response media type
+        406:
+          description: Not Acceptable
+          headers:
+            Content-Type:
+              type: string
+              description: the response media type
+        500:
+              description: Unexpected error
+              headers:
+                Content-Type:
+                  type: string
+                  description: the response media type
+              schema:
+                $ref: '#/definitions/failure'
+    post:
+      summary: 新建Flavor
+      operationId: createFlavors
+      tags:
+        - Flavor
+      description: admin wants to create a new flavor
+      parameters:
+        - name: body
+          in: body
+          description: new flavor info
+          schema:
+            $ref: '#/definitions/FlavorCreateRequest'
+      responses:
+        201:
+          description: Created
+          headers:
+            Content-Type:
+              type: string
+              description: the response media type
+            Content-Location:
+              type: string
+              description: the uri of querying result
+          schema:
+            $ref: '#/definitions/FlavorResponse'
+
+        400:
+          description: Bad Request
+          headers:
+            Content-Type:
+              type: string
+              description: the response media type
+          schema:
+            $ref: '#/definitions/failure'
+        401:
+          description: Unauthorized
+          headers:
+            Content-Type:
+              type: string
+              description: the response media type
+        403:
+          description: Forbidden
+          headers:
+            Content-Type:
+              type: string
+              description: the response media type
+        406:
+          description: Not Acceptable
+          headers:
+            Content-Type:
+              type: string
+              description: the response media type
+        415:
+          description: Unsupported Media Type
+          headers:
+            Content-Type:
+              type: string
+              description: the response media type
+        500:
+          description: Unexpected error
+          headers:
+            Content-Type:
+              type: string
+              description: the response media type
+          schema:
+            $ref: '#/definitions/failure'
+  /flavors/{flavorId}:
+    get:
+      summary: 查找Flavor基本信息
+      operationId: findFlavor
+      tags:
+        - Flavor
+      parameters:
+        - name: flavorId
+          in: path
+          description: flavor id
+          type: string
+          required: true
+      responses:
+        200:
+          description: OK
+          headers:
+            Content-Type:
+              type: string
+              description: the response media type
+          schema:
+            $ref: '#/definitions/FlavorResponse'
+        401:
+          description: Unauthorized
+          headers:
+            Content-Type:
+              type: string
+              description: the response media type
+        406:
+          description: Not Acceptable
+          headers:
+            Content-Type:
+              type: string
+              description: the response media type
+        500:
+          description: Unexpected error
+          headers:
+            Content-Type:
+              type: string
+              description: the response media type
+          schema:
+            $ref: '#/definitions/failure'
+definitions:
+  InstanceListResponse:
+    type: array
+    items:
+      $ref: '#/definitions/InstanceResponse'
+  InstanceCreateRequest:
+    type: object
+    properties:
+      flavor_id:
+        type: string
+      az:
+        type: string
+  InstanceResponse:
+    type: object
+    required:
+      - instance_id
+    properties:
+      instance_id:
+        type: string
+      az:
+        type: string
+      flavor_id:
+        type: string
+      status:
+        type: string
+      links:
+        $ref: '#/definitions/links'
+  FlavorListResponse:
+      type: array
+      items:
+        $ref: '#/definitions/FlavorResponse'
+  FlavorCreateRequest:
+    type: object
+    properties:
+      flavorId:
+        type: string
+      vCPU:
+        type: integer
+      memInGiB:
+        type: number
+  FlavorResponse:
+    type: object
+    properties:
+      flavorId:
+        type: string
+      vCPU:
+        type: integer
+      memInGiB:
+        type: number
+  failure:
+    type: object
+    properties:
+      errors:
+        type: array
+        items:
+          $ref: '#/definitions/error'
+      meta:
+        $ref: '#/definitions/meta'
+  error:
+    type: object
+    properties:
+      id:
+        description: A unique identifier for the occurrence of the problem
+        type: string
+      links:
+        $ref: '#/definitions/links'
+      status:
+        description: Http status code
+        type: string
+      code:
+        description: Application specific error code
+        type: string
+      title:
+        type: string
+      detail:
+        type: string
+      source:
+        type: object
+        properties:
+          pointer:
+            description: A JSON Pointer[RFC6901] to associated entity in the request document. [e.g. /data for data object, /data/attributes/title for specific attribute
+            type: string
+          parameter:
+            description: A string indicating which query parameter caused error
+            type: string
+      meta:
+        $ref: '#/definitions/meta'
+  meta:
+    type: object
+  links:
+    type: array
+    items:
+      type: object
+      properties:
+        href:
+          type: string
+        rel:
+          type: string
