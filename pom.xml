@@ -8,11 +8,11 @@
         <relativePath/>
     </parent>
 
-    <groupId>me.zhuao.ddd.sample</groupId>
-    <artifactId>ec2</artifactId>
+    <groupId>com.dddsample</groupId>
+    <artifactId>ev</artifactId>
     <packaging>jar</packaging>
     <properties>
-        <start-class>com.dddsample.ec2.Application</start-class>
+        <start-class>com.dddsample.ev.Application</start-class>
         <java.version>1.8</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>

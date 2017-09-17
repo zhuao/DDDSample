@@ -1,4 +1,4 @@
-package com.dddsample.ec2;
+package com.dddsample.ev;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

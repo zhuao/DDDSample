@@ -31,8 +31,13 @@ public class InstancesApiTest {
     @Test
     public void test_api__can__return_default_pets___by_direct_access_json_field() throws IOException {
         given()
-                .when().get("/instances")
-                .then().statusCode(200);
+                .when()
+                    .request()
+                        .param("origination", "here")
+                        .param("destination", "there")
+                    .post("/trips")
+                .then()
+                    .statusCode(201);
     }
 
 }
